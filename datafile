@@ -1,0 +1,179 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyO8a+ZkeRe5/CjN9tzCsETx",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/SEOUL-ABSS/SHIPSHIP/blob/main/datafile\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "RSirFn7_giK1"
+      },
+      "outputs": [],
+      "source": [
+        "https://drive.google.com/file/d/19-BZcpdysGJ0OkkqF0yDC5gvAS3MQM_O/view?usp=drivesdk\n",
+        "\n",
+        "https://drive.google.com/file/d/1VY-kd4Y_ODhLl2abTR5AamCdXdQt2GTw/view?usp=drivesdk"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "e2727f73",
+        "outputId": "1cc5654e-a1a0-43b1-bf9c-a7c6ba739c41"
+      },
+      "source": [
+        "import requests\n",
+        "\n",
+        "def download_file_from_google_drive(id, destination):\n",
+        "    URL = \"https://docs.google.com/uc?export=download\"\n",
+        "\n",
+        "    session = requests.Session()\n",
+        "\n",
+        "    response = session.get(URL, params = { 'id' : id }, stream = True)\n",
+        "    token = get_confirm_token(response)\n",
+        "\n",
+        "    if token:\n",
+        "        params = { 'id' : id, 'confirm' : token }\n",
+        "        response = session.get(URL, params = params, stream = True)\n",
+        "\n",
+        "    save_response_content(response, destination)\n",
+        "\n",
+        "def get_confirm_token(response):\n",
+        "    for key, value in response.cookies.items():\n",
+        "        if key.startswith('download'):\n",
+        "            return value\n",
+        "\n",
+        "    return None\n",
+        "\n",
+        "def save_response_content(response, destination):\n",
+        "    CHUNK_SIZE = 32768\n",
+        "\n",
+        "    with open(destination, \"wb\") as f:\n",
+        "        for chunk in response.iter_content(CHUNK_SIZE):\n",
+        "            if chunk: # filter out keep-alive new chunks\n",
+        "                f.write(chunk)\n",
+        "\n",
+        "# Extracting file IDs from the links\n",
+        "file_id_1 = '19-BZcpdysGJ0OkkqF0yDC5gvAS3MQM_O'\n",
+        "file_id_2 = '1VY-kd4Y_ODhLl2abTR5AamCdXdQt2GTw'\n",
+        "\n",
+        "# Define destination paths\n",
+        "destination_1 = 'file1.csv' # Replace with your desired filename and extension\n",
+        "destination_2 = 'file2.csv' # Replace with your desired filename and extension\n",
+        "\n",
+        "# Download the files\n",
+        "download_file_from_google_drive(file_id_1, destination_1)\n",
+        "download_file_from_google_drive(file_id_2, destination_2)\n",
+        "\n",
+        "print(f\"Downloaded {destination_1}\")\n",
+        "print(f\"Downloaded {destination_2}\")"
+      ],
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Downloaded file1.csv\n",
+            "Downloaded file2.csv\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "232140da",
+        "outputId": "a4ef348b-7cf8-4d77-db06-e74618b2545b"
+      },
+      "source": [
+        "# Convert bytes to gigabytes\n",
+        "file1_size_gb = file1_size / (1024**3)\n",
+        "file2_size_gb = file2_size / (1024**3)\n",
+        "\n",
+        "print(f\"파일 1의 크기: {file1_size_gb:.6f} GB\")\n",
+        "print(f\"파일 2의 크기: {file2_size_gb:.6f} GB\")"
+      ],
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "파일 1의 크기: 0.000556 GB\n",
+            "파일 2의 크기: 0.000556 GB\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "1319a86c",
+        "outputId": "33de58df-89df-46c7-ba6a-97b8f5c97b08"
+      },
+      "source": [
+        "import os\n",
+        "\n",
+        "file1_size = os.path.getsize('file1.csv')\n",
+        "file2_size = os.path.getsize('file2.csv')\n",
+        "\n",
+        "print(f\"파일 1의 크기: {file1_size} 바이트\")\n",
+        "print(f\"파일 2의 크기: {file2_size} 바이트\")"
+      ],
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "파일 1의 크기: 597192 바이트\n",
+            "파일 2의 크기: 597097 바이트\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "5ad0a76f"
+      },
+      "source": [
+        "위 코드는 Google Drive 링크에서 파일을 다운로드하는 함수를 정의합니다. 파일 ID를 추출하고 해당 함수를 사용하여 두 파일을 모두 다운로드합니다. 파일 이름을 원하는대로 변경할 수 있습니다."
+      ]
+    }
+  ]
+}
